@@ -1,7 +1,5 @@
-import Link from "next/link";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useWalletNfts, NftTokenAccount } from "@nfteyez/sol-rayz-react";
 import { useConnection } from "@solana/wallet-adapter-react";
 
@@ -9,10 +7,10 @@ import { Loader } from "../../components/Loader";
 import { LionsLogo } from "../../components/LionsLogo";
 import { SelectAndConnectWalletButton } from "../../components/SelectAndConnectWalletButton";
 import lionhashes from '../../utils/Lost-Lions-Hash.json';
-import axios from '../../lib/axios'
 
 import { NftCard } from "./NftCard";
 import styles from "./index.module.css";
+import axios from "lib/axios";
 const walletPublicKey = "";
 
 export const GalleryView: FC = ({}) => {
@@ -26,16 +24,10 @@ export const GalleryView: FC = ({}) => {
     connection,
   });
 
-  const onUseWalletClick = () => {
-    if (publicKey) {
-      setWalletToParsePublicKey(publicKey?.toBase58());
-    }
-  };
-
   return (
-    <div className="container mx-auto max-w-6xl p-4 2xl:px-0">
+    <div className="container mx-auto max-w-6xl 2xl:px-0">
       <div className={styles.container}>
-        <div className="text-center pt-2">
+        <div className="text-center">
           <div className="hero min-h-16 p-0">
             <div className="text-center hero-content w-full">
               <div className="w-full">
@@ -47,10 +39,8 @@ export const GalleryView: FC = ({}) => {
                   <div>
                     <div className="form-control mt-8">
                       <label className="input-group input-group-vertical input-group-lg">
-                        <div className="my-10">
-                          <SelectAndConnectWalletButton
-                            onUseWalletClick={onUseWalletClick}
-                          />
+                        <div >
+
                         </div>
                       </label>
                     </div>
@@ -90,14 +80,37 @@ const LionList = ({ nfts, error }: NftListProps) => {
   if (error) {
     return null;
   }
-  
-
   const lions = [];
+  const winningLions = [];
 
   nfts?.forEach(nft => {
+    const [data, setData] = useState([]);
+    // make the fetch the first time your component mounts
+    useEffect(() => {
+      axios.get(`api/winningLion/${nft?.mint}`).then(response => setData(response.data.mint_address));
+    }, []);
+
+    if (data == undefined) //devnet remove this
+      {
+        lions?.push(nft);
+        
+      }
+      else {
+        winningLions?.push(nft);
+      }                                   //to this
+
+
     if (lionhashes.includes(nft?.mint)){
-      lions?.push(nft);
-    } 
+      if (data !== undefined)
+      {
+        winningLions?.push(nft);
+      }
+      else {
+        lions?.push(nft);
+      }
+    }
+    
+    
   });
 
   if (!nfts?.length) {
@@ -108,12 +121,30 @@ const LionList = ({ nfts, error }: NftListProps) => {
     );
   }
 
+
   return (
-    <><h1>LostLions in your wallet</h1>
+    <>
+    <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-tr pt-10 pb-10 from-[#FAD836] to-[#47833C]">
+      Winners <span className='text-sm font-normal align-top text-slate-700'></span>
+    </h1>
+
+
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-start">
-      {nfts?.map((nft) => (     
-        <NftCard key={nft.mint} details={nft} onSelect={() => {}} /> //devnet
+      {winningLions?.map((nft) => (     
+        <NftCard winner={false} key={nft.mint} details={nft} onSelect={() => {}} /> //devnet
       ))}
-    </div></>
+    </div>
+
+
+    <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-tr pt-10 pb-10 from-[#FAD836] to-[#47833C]">
+      {lions?.length ? <>Lions to Wager</> : <>No Lions Left to Wager</>} <span className='text-sm font-normal align-top text-slate-700'></span>
+    </h1>
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-start">
+      {lions?.map((nft) => (     
+        <NftCard winner={true} key={nft.mint} details={nft} onSelect={() => {}} /> //devnet {}
+      ))}
+    </div>
+</>
   );
 };
+

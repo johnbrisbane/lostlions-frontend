@@ -2,7 +2,7 @@
 import { WalletNotConnectedError } from '@solana/wallet-adapter-base'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react'
 import { Transaction, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js'
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { getOrCreateAssociatedTokenAccount } from './getOrCreateAssociatedTokenAccount'
@@ -26,8 +26,7 @@ type Props = {
   export const SendTransaction: FC<Props> = ({
     toPubkey,
     mintaddress
-    }) => {    
-
+    }) => {          
             if (!toPubkey ) return
 
             const toastId = toast.loading('Processing transaction...')
@@ -38,6 +37,7 @@ type Props = {
             const userPub = publicKey?.toBase58()
 
             const onClick = useCallback(async () => {
+                console.log(mintaddress)
 
             try {
                 if (!publicKey || !signTransaction) throw new WalletNotConnectedError()

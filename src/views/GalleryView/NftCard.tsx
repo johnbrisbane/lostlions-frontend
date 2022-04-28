@@ -1,13 +1,12 @@
 import { FC, useState, useEffect } from "react";
 import useSWR from "swr";
 import { EyeOffIcon } from "@heroicons/react/outline";
-import { SendBackToken } from "components/AppSendBack";
 
 import { fetcher } from "utils/fetcher";
 
 import { SendTransaction } from "../../components/TransferSPLToken/sendTransaction"
-import axios from "lib/axios";
-import { SystemInstruction } from "@solana/web3.js";
+
+import { LionsLogoSmall } from "components/LionsLogoSmall";
 
 const AppWallet = process.env.NEXT_PUBLIC_WALLET_PUBLIC_KEY;
 
@@ -15,9 +14,11 @@ type Props = {
   details: any;
   onSelect: (id: string) => void;
   onTokenDetailsFetched?: (props: any) => unknown;
+  winner: boolean;
 };
 
 export const NftCard: FC<Props> = ({
+  winner,
   details,
   onSelect,
   onTokenDetailsFetched = () => {},
@@ -44,16 +45,15 @@ export const NftCard: FC<Props> = ({
   const onImageError = () => setFallbackImage(true);
   const { image } = data ?? {};
 
-  hasWon(details?.mint)
-      .then( 
-          function(res) {
-              if (res !== undefined) {
-                console.log(details)
-                document.getElementById(details?.mint).style.display = 'none';
-                document.getElementById(name).style.display = 'block';
-              }
-          }
-      );
+  console.log(details?.mint)
+
+  let description;
+  if (!winner){
+    description = <h1>Breedable Lion <LionsLogoSmall /></h1>;
+  }
+  else {
+    description = <SendTransaction toPubkey={AppWallet} mintaddress={details?.mint} />;
+  }
 
   return (
     <div className={`card bordered max-w-xs compact rounded-md`}>
@@ -74,23 +74,8 @@ export const NftCard: FC<Props> = ({
       </figure>
       <div className="card-body" id={details?.mint}>
         <h2 className="card-title text-sm text-left">{name}</h2>
-        <SendTransaction toPubkey={AppWallet} mintaddress={details?.mint} />
-      </div>
-      <div id={name} style={{display: 'none' }}>
-          <h1>WINNER</h1>
+        {description}
       </div>
     </div>
   );
 };
-
-async function hasWon(mintaddress: string) {
-  try {
-    const res = await axios.get(`api/winningLion/${mintaddress}`);
-
-    return res.data.mint_address; 
-      // Don't forget to return something   
-  }
-  catch (err) {
-      console.error(err);
-  }
-}

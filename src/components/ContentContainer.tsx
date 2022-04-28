@@ -31,11 +31,6 @@ export const ContentContainer: FC = props => {
                   <a>Plinko</a>
                 </Link>
               </li>
-              <li>
-                <Link href="/gallery">
-                  <a>Gallery</a>
-                </Link>
-              </li>
               </>
               ) : null}
         </ul>

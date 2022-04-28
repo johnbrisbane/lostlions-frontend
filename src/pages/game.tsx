@@ -5,7 +5,7 @@ import { BasicsView } from "../views";
 import { GalleryView } from "../views";
 
 
-const Home: NextPage = (props) => {
+const Game: NextPage = (props) => {
       return (
         <div>
           <Head>
@@ -21,4 +21,4 @@ const Home: NextPage = (props) => {
       );
 };
 
-export default Home;
+export default Game;
