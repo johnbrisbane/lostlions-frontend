@@ -26,12 +26,6 @@ export const SeedDatabase: FC = () => {
     return (
         <div>
             <DisplayData />
-            <button
-                className="btn m-2 bg-gradient-to-r from-[#9945FF] to-[#14F195] hover:from-pink-500 hover:to-yellow-500 ..."
-                onClick={onClick}
-            >
-                <span> WARNING SEED DATABASE </span>
-            </button>
         </div>
     );
 };

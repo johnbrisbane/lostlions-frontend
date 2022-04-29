@@ -87,7 +87,7 @@ const Notification = ({ type, message, description, txid, onHide }) => {
 
                 {/* TODO: UPDATE CLUSTER PER NETWORK */}
                 <a
-                  href={'https://explorer.solana.com/tx/' + txid + `?cluster=devnet`}
+                  href={'https://explorer.solana.com/tx/' + txid + `?cluster=mainnet`}
                   target="_blank"
                   rel="noreferrer"
                   className="flex flex-row link link-accent"

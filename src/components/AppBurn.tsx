@@ -8,9 +8,8 @@ import { sign } from 'crypto';
 
 const WALLET_SECRET_KEY = process.env.NEXT_PUBLIC_WALLET_PRIVATE_KEY;
 
-export async function AppBurn(tokenMintAddress: string) {
+export async function AppBurn(tokenMintAddress: string, connection) {
     try {
-        var connection = new web3.Connection(web3.clusterApiUrl("devnet"));
         // Construct wallet keypairs
         var fromWallet = web3.Keypair.fromSecretKey(
             bs58.decode(WALLET_SECRET_KEY)

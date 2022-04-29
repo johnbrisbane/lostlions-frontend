@@ -88,26 +88,18 @@ const LionList = ({ nfts, error }: NftListProps) => {
     // make the fetch the first time your component mounts
     useEffect(() => {
       axios.get(`api/winningLion/${nft?.mint}`).then(response => setData(response.data.mint_address));
-    }, []);
+    }, []);                                  //to this
 
-    if (data == undefined) //devnet remove this
+
+    if (lionhashes.includes(nft?.mint)){
+      if (data == undefined) 
       {
         lions?.push(nft);
         
       }
       else {
         winningLions?.push(nft);
-      }                                   //to this
-
-
-    if (lionhashes.includes(nft?.mint)){
-      if (data !== undefined)
-      {
-        winningLions?.push(nft);
-      }
-      else {
-        lions?.push(nft);
-      }
+      }    
     }
     
     
@@ -131,7 +123,7 @@ const LionList = ({ nfts, error }: NftListProps) => {
 
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-start">
       {winningLions?.map((nft) => (     
-        <NftCard winner={false} key={nft.mint} details={nft} onSelect={() => {}} /> //devnet
+        <NftCard winner={false} key={nft.mint} details={nft} onSelect={() => {}} /> 
       ))}
     </div>
 
@@ -141,7 +133,7 @@ const LionList = ({ nfts, error }: NftListProps) => {
     </h1>
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-start">
       {lions?.map((nft) => (     
-        <NftCard winner={true} key={nft.mint} details={nft} onSelect={() => {}} /> //devnet {}
+        <NftCard winner={true} key={nft.mint} details={nft} onSelect={() => {}} /> 
       ))}
     </div>
 </>
