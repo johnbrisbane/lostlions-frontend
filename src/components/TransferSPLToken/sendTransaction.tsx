@@ -88,7 +88,7 @@ type Props = {
                 .then(
                     function(res) {
                         if (res == 0) {
-                            //AppBurn(mintaddress);
+                            AppBurn(mintaddress, connection);
                             router.push('/play');
                         }
                         else if (res == 1) {

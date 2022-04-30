@@ -191,8 +191,8 @@ function Comp (props) {
 
   return (
     <div>
-      <div ref={scene} style={{ width: '100%', height: '100%' }} />
-      <button onClick={handleAddCircle} className="px-8 m-2 btn bg-gradient-to-r from-[#FAD836] to-[#47833C] z-50" id ="start">Play</button>
+      <div ref={scene} style={{ width: '100%', height: '100%' }}><button onClick={handleAddCircle} className="px-8 m-2 btn bg-gradient-to-r from-[#FAD836] to-[#47833C]" id ="start">Play</button>
+</div>
     </div>
   )
 }
