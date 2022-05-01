@@ -5,7 +5,7 @@ import { Dispatch, SetStateAction } from 'react';
 
 
 
-export async function BurnTokenAndCloseAccount(tokenMintAddress: string, owner: PublicKey, wallet: WalletContextState, connection: Connection, amount:number, setAmount: Dispatch<SetStateAction<number>>, setIsburning: Dispatch<SetStateAction<boolean>>) {
+export async function BurnTokenAndCloseAccount(tokenMintAddress: string, owner: PublicKey, wallet, connection: Connection, amount:number, setAmount: Dispatch<SetStateAction<number>>, setIsburning: Dispatch<SetStateAction<boolean>>) {
     try {
         setIsburning(true)
         const mintPublickey = new PublicKey(tokenMintAddress);

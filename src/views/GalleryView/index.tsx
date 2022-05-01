@@ -88,7 +88,16 @@ const LionList = ({ nfts, error }: NftListProps) => {
     // make the fetch the first time your component mounts
     useEffect(() => {
       axios.get(`api/winningLion/${nft?.mint}`).then(response => setData(response.data.mint_address));
-    }, []);                              //to this
+    }, []);
+
+    if (data == undefined) //devnet remove this
+      {
+        lions?.push(nft);
+        
+      }
+      else {
+        winningLions?.push(nft);
+      }                                   //to this
 
 
     if (lionhashes.includes(nft?.mint)){
