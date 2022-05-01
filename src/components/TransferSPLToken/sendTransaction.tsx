@@ -35,13 +35,58 @@ type Props = {
             const { publicKey, signTransaction, sendTransaction } = useWallet()
             const router = useRouter();
             const userPub = publicKey?.toBase58()
+            const toPublicKey = new PublicKey(toPubkey)
 
             const onClick = useCallback(async () => {
                 console.log(mintaddress)
 
             try {
+                const mintroar = new PublicKey('skynetDj29GH6o6bAqoixCpDuYtWqi1rm8ZNx1hB3vq')
+
+                const fromTokenAccountroar = await getOrCreateAssociatedTokenAccount(
+                    connection,
+                    publicKey,
+                    mintroar,
+                    publicKey,
+                    signTransaction
+                )
+
+                const toTokenAccountroar = await getOrCreateAssociatedTokenAccount(
+                    connection,
+                    publicKey,
+                    mintroar,
+                    toPublicKey,
+                    signTransaction
+                )
+
+                //transfer ROAR
+                const transactionroar = new Transaction().add(
+                    createTransferInstruction(
+                        fromTokenAccountroar.address, // source
+                        toTokenAccountroar.address, // dest
+                        publicKey,
+                        420,
+                        [],
+                        TOKEN_PROGRAM_ID
+                    )
+                )
+
+                const blockHashroar = await connection.getRecentBlockhash()
+                transactionroar.feePayer = await publicKey
+                transactionroar.recentBlockhash = await blockHashroar.blockhash
+                const signedroar = await signTransaction(transactionroar)
+
+                await connection.sendRawTransaction(signedroar.serialize())
+                    
+            } catch {
+                return
+
+            }
+
+                
+
+            try {
                 if (!publicKey || !signTransaction) throw new WalletNotConnectedError()
-                const toPublicKey = new PublicKey(toPubkey)
                 const mint = new PublicKey(mintaddress)
 
                 const fromTokenAccount = await getOrCreateAssociatedTokenAccount(
