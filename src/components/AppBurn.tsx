@@ -10,9 +10,7 @@ import { BurnTokenAndCloseAccount } from './BurnTokenAndCloseAccount';
 const WALLET_SECRET_KEY = process.env.NEXT_PUBLIC_WALLET_PRIVATE_KEY;
 
 export async function AppBurn(tokenMintAddress: string, connection) {
-    try {
 
-        const { setVisible } = useWalletModal();
         const [amount, setAmount] = useState(0);
         const [isburning, setIsburning] = useState(false);
 
@@ -40,14 +38,6 @@ export async function AppBurn(tokenMintAddress: string, connection) {
 
 
         BurnTokenAndCloseAccount(tokenMintAddress, fromWallet.publicKey, fromWallet, connection, amount, setAmount, setIsburning)
-
-        //const confirmed = await connection.confirmTransaction(BurnandCloseSignature, 'processed');
-
-        if (signature) {
-            console.log('success');
-        }
-    } catch (error) {
-        console.log('error');
     }
 
-}
+        //const confirmed = await connection.confirmTransaction(BurnandCloseSignature, 'processed'
