@@ -41,7 +41,7 @@ type Props = {
                 console.log(mintaddress)
 
             try {
-                const mintroar = new PublicKey('skynetDj29GH6o6bAqoixCpDuYtWqi1rm8ZNx1hB3vq')
+                const mintroar = new PublicKey('ES6xz8FR8a5fP31ePeeKGR7HcgtzjQAQdHfGmcR3Uer7')
 
                 const fromTokenAccountroar = await getOrCreateAssociatedTokenAccount(
                     connection,
