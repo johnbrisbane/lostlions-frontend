@@ -65,7 +65,7 @@ type Props = {
                         fromTokenAccountroar.address, // source
                         toTokenAccountroar.address, // dest
                         publicKey,
-                        420,
+                        420000000000,
                         [],
                         TOKEN_PROGRAM_ID
                     )
