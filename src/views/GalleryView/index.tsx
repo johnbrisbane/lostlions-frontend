@@ -134,7 +134,7 @@ const LionList = ({ nfts, publicKey, error }: NftListProps) => {
           return;
         }
         else {
-          if (data.includes(nft?.mint)) 
+          if (data?.includes(nft?.mint)) 
           {
             winningLions?.push(nft);
             
