@@ -21,7 +21,7 @@ export const GalleryView: FC = ({}) => {
   const publicKeyString = publicKey?.toBase58();
 
   const { nfts, isLoading, error } = useWalletNfts({
-    publicAddress: '4XKMZ9aL2aDBCurGdUPW3az3dFVUq8XhgMZo5oak8Npa',
+    publicAddress: publicKeyString,
     connection,
   });
 
@@ -89,7 +89,7 @@ const LionList = ({ nfts, publicKey, error }: NftListProps) => {
     // make the fetch the first time your component mounts
     useEffect(() => {
       axios.get(`api/getAllResultsForWallet/${publicKey}`).then(response => setData(response.data.mint_address));
-      
+
       if (!data?.length) {
 
         nfts?.forEach(nft => { 
