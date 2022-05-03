@@ -84,40 +84,18 @@ const LionList = ({ nfts, publicKey, error }: NftListProps) => {
   }
   const lions = [];
   const winningLions = [];
+  const mintaddresswin = [];
 
   const [data, setData] = useState([]);
     // make the fetch the first time your component mounts
     useEffect(() => {
-      axios.get(`api/getAllResultsForWallet/${publicKey}`).then(response => setData(response.data.mint_address));
+      axios.get(`api/getAllResultsForWallet/${publicKey}`).then(response => setData(response.data));
 
-      if (!data?.length) {
-
-        nfts?.forEach(nft => { 
-          if (lionhashes.includes(nft?.mint)){
-            lions?.push(nft);
-          }
-        });
-      }
-      else {
-        nfts?.forEach(nft => {                            //to this
-  
-          if (!lionhashes.includes(nft?.mint)){
-            return;
-          }
-          else {
-            if (data.includes(nft?.mint)) 
-            {
-              winningLions?.push(nft);
-              
-            }
-            else {
-              lions?.push(nft);
-            }    
-          }
-        });
-  
-      }
     }, []);  
+
+    data.forEach(element => {
+      mintaddresswin?.push(element?.mint_address)
+    });
 
     if (!data?.length) {
 
@@ -134,14 +112,16 @@ const LionList = ({ nfts, publicKey, error }: NftListProps) => {
           return;
         }
         else {
-          if (data?.includes(nft?.mint)) 
-          {
-            winningLions?.push(nft);
-            
-          }
-          else {
-            lions?.push(nft);
-          }    
+
+            if (mintaddresswin?.includes(nft?.mint)) 
+            {
+              winningLions?.push(nft);
+              
+            }
+            else {
+              lions?.push(nft);
+            }              
+          
         }
       });
 
