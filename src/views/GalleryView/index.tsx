@@ -18,9 +18,10 @@ export const GalleryView: FC = ({}) => {
   const setWalletToParsePublicKey =
     useState<string>(walletPublicKey);
   const { publicKey } = useWallet();
+  const publicKeyString = publicKey?.toBase58();
 
   const { nfts, isLoading, error } = useWalletNfts({
-    publicAddress: publicKey?.toBase58(),
+    publicAddress: '4XKMZ9aL2aDBCurGdUPW3az3dFVUq8XhgMZo5oak8Npa',
     connection,
   });
 
@@ -59,7 +60,7 @@ export const GalleryView: FC = ({}) => {
                       <Loader />
                     </div>
                   ) : (
-                    <LionList nfts={nfts} />
+                    <LionList nfts={nfts} publicKey={publicKeyString} />
                   )}
                 </div>
               </div>
@@ -74,36 +75,79 @@ export const GalleryView: FC = ({}) => {
 type NftListProps = {
   nfts: NftTokenAccount[];
   error?: Error;
+  publicKey: string;
 };
 
-const LionList = ({ nfts, error }: NftListProps) => {
+const LionList = ({ nfts, publicKey, error }: NftListProps) => {
   if (error) {
     return null;
   }
   const lions = [];
   const winningLions = [];
 
-  nfts?.forEach(nft => {
-    const [data, setData] = useState([]);
+  const [data, setData] = useState([]);
     // make the fetch the first time your component mounts
     useEffect(() => {
-      axios.get(`api/winningLion/${nft?.mint}`).then(response => setData(response.data.mint_address));
-    }, []);                              //to this
+      axios.get(`api/getAllResultsForWallet/${publicKey}`).then(response => setData(response.data.mint_address));
+      
+      if (!data?.length) {
 
-
-    if (lionhashes.includes(nft?.mint)){
-      if (data == undefined) 
-      {
-        lions?.push(nft);
-        
+        nfts?.forEach(nft => { 
+          if (lionhashes.includes(nft?.mint)){
+            lions?.push(nft);
+          }
+        });
       }
       else {
-        winningLions?.push(nft);
-      }    
+        nfts?.forEach(nft => {                            //to this
+  
+          if (!lionhashes.includes(nft?.mint)){
+            return;
+          }
+          else {
+            if (data.includes(nft?.mint)) 
+            {
+              winningLions?.push(nft);
+              
+            }
+            else {
+              lions?.push(nft);
+            }    
+          }
+        });
+  
+      }
+    }, []);  
+
+    if (!data?.length) {
+
+      nfts?.forEach(nft => { 
+        if (lionhashes.includes(nft?.mint)){
+          lions?.push(nft);
+        }
+      });
     }
-    
-    
-  });
+    else {
+      nfts?.forEach(nft => {                            //to this
+
+        if (!lionhashes.includes(nft?.mint)){
+          return;
+        }
+        else {
+          if (data.includes(nft?.mint)) 
+          {
+            winningLions?.push(nft);
+            
+          }
+          else {
+            lions?.push(nft);
+          }    
+        }
+      });
+
+    }
+
+
 
   if (!nfts?.length) {
     return (
@@ -113,8 +157,11 @@ const LionList = ({ nfts, error }: NftListProps) => {
     );
   }
 
+  
+
 
   return (
+    
     <>
     <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-tr pt-10 pb-10 from-[#FAD836] to-[#47833C]">
       Winners <span className='text-sm font-normal align-top text-slate-700'></span>

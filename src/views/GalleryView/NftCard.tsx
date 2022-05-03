@@ -45,7 +45,6 @@ export const NftCard: FC<Props> = ({
   const onImageError = () => setFallbackImage(true);
   const { image } = data ?? {};
 
-  console.log(details?.mint)
 
   let description;
   if (!winner){
