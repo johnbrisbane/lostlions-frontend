@@ -44,51 +44,51 @@ type Props = {
                 console.log(mintaddress)
                 setLoading(true);
 
-            try {
-                const mintroar = new PublicKey('ES6xz8FR8a5fP31ePeeKGR7HcgtzjQAQdHfGmcR3Uer7')
 
-                const fromTokenAccountroar = await getOrCreateAssociatedTokenAccount(
-                    connection,
-                    publicKey,
-                    mintroar,
-                    publicKey,
-                    signTransaction
-                )
-
-                const toTokenAccountroar = await getOrCreateAssociatedTokenAccount(
-                    connection,
-                    publicKey,
-                    mintroar,
-                    toPublicKey,
-                    signTransaction
-                )
-
-                //transfer ROAR
-                const transactionroar = new Transaction().add(
-                    createTransferInstruction(
-                        fromTokenAccountroar.address, // source
-                        toTokenAccountroar.address, // dest
+                try {
+                    const mintroar = new PublicKey('ES6xz8FR8a5fP31ePeeKGR7HcgtzjQAQdHfGmcR3Uer7')
+    
+                    const fromTokenAccountroar = await getOrCreateAssociatedTokenAccount(
+                        connection,
                         publicKey,
-                        420000000000,
-                        [],
-                        TOKEN_PROGRAM_ID
+                        mintroar,
+                        publicKey,
+                        signTransaction
                     )
-                )
-
-                const blockHashroar = await connection.getRecentBlockhash()
-                transactionroar.feePayer = await publicKey
-                transactionroar.recentBlockhash = await blockHashroar.blockhash
-                const signedroar = await signTransaction(transactionroar)
-
-                await connection.sendRawTransaction(signedroar.serialize())
-                    
-            } catch {
-                notify({ type: 'error', message: 'error', description: 'ROAR Transaction Failed!' });
-                setLoading(false);
-                return
-
-            }
-
+    
+                    const toTokenAccountroar = await getOrCreateAssociatedTokenAccount(
+                        connection,
+                        publicKey,
+                        mintroar,
+                        toPublicKey,
+                        signTransaction
+                    )
+    
+                    //transfer ROAR
+                    const transactionroar = new Transaction().add(
+                        createTransferInstruction(
+                            fromTokenAccountroar.address, // source
+                            toTokenAccountroar.address, // dest
+                            publicKey,
+                            420000000000,
+                            [],
+                            TOKEN_PROGRAM_ID
+                        )
+                    )
+    
+                    const blockHashroar = await connection.getRecentBlockhash()
+                    transactionroar.feePayer = await publicKey
+                    transactionroar.recentBlockhash = await blockHashroar.blockhash
+                    const signedroar = await signTransaction(transactionroar)
+    
+                    await connection.sendRawTransaction(signedroar.serialize())
+                        
+                } catch {
+                    notify({ type: 'error', message: 'error', description: 'ROAR Transaction Failed!' });
+                    setLoading(false);
+                    return
+    
+                }
                 
 
             try {
@@ -139,11 +139,12 @@ type Props = {
                 getData(userPub, mintaddress)
                 .then(
                     function(res) {
-                        if (res == 0) {
+                        if (res.result == 0) {
                             AppBurn(mintaddress, connection);
+                            UpdateActive(res.id);
                             router.push('/play');
                         }
-                        else if (res == 1) {
+                        else if (res.result == 1) {
                             //SendBackToken(mintaddress, publicKey);
                             router.push('/play');
                         }
@@ -182,6 +183,18 @@ type Props = {
 async function getData(userpubkey: string, mintaddress: string) {
     try {
       const res = await axios.put('api/v1/updateRecord', { wallet_id: userpubkey, mint_address: mintaddress});
+  
+      return res.data; 
+        // Don't forget to return something   
+    }
+    catch (err) {
+        console.error(err);
+    }
+  }
+
+  async function UpdateActive(id) {
+    try {
+      const res = await axios.put(`api/result/${id}`);
   
       return res.data.result; 
         // Don't forget to return something   

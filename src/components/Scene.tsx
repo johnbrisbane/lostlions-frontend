@@ -4,10 +4,17 @@ import axios from 'lib/axios'
 import { useWallet, useConnection } from '@solana/wallet-adapter-react'
 import { useRouter } from 'next/router'
 import { SendBackToken } from './AppSendBack'
+import { Loader } from './Loader'
+import { LionsLogo } from './LionsLogo'
+import liongif from '../../public/lion.gif'
+import Image from 'next/image';
+
 
 function Comp (props) {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const [winner, setWinner] = useState<boolean>(false);
+  const [loser, setLoser] = useState<boolean>(false);
 
   const scene = useRef()
   const isPressed = useRef(false)
@@ -173,32 +180,90 @@ function Comp (props) {
   useEffect(() => {
     async function getResults() {
       const request = await axios.get(`api/result/${userPub}`);
-      if (request.data.active == '1'){
-        setData(request.data.starting_pos);
-        if (request.data.result == '1')
-        {
-          setWinner(true);
-        }
-      }
+      setData(request.data);
       return request;
     }      
     getResults()
   }, [userPub]); 
+  console.log(data.active)
 
-
-  const handleAddCircle = () => {
+  const handleAddCircle = useCallback(async () => {
+    
+    setLoading(true);
     (document.getElementById("start") as HTMLButtonElement).disabled = true;
-     World.add(engine.current.world, Bodies.circle(data, 5, 10, { restitution: .9 }));
 
-     if (winner){
-      HandleResult(1);
-     }
-     else {
-      HandleResult(0);
-     }
+    if(data && data.active == '1'){
+      UpdateActive(data.id);
+      World.add(engine.current.world, Bodies.circle(data.starting_pos, 5, 10, { restitution: .9 }));
 
+      if (data.result == 0) {
+        sleep(10500);
+        setWinner(true);
+      }
+      else {
+        sleep(10500);
+        setLoser(true);
+      }
+    }
+    else {
+      if (confirm("You have no Lion Credit for plinko, Please return home to submit a lion")) {
+          router.push('/');
+        } else {
+          router.push('/');
+        }
+    }
+  }, [publicKey]);
+
+  return (
+    <div>
+      <div ref={scene} style={{ width: '100%', height: '100%' }}>
+      {loading ? (
+        <button>
+          <Loader />
+        </button>
+          
+      ) : (
+        <button onClick={handleAddCircle} className="px-8 m-2 btn bg-gradient-to-r from-[#FAD836] to-[#47833C]" id ="start">Play</button>
+      )}
+      </div>
+      {winner ? (
+        <Image src={liongif} alt="lion..." />
+      ) : (
+        <div></div>
+      )}
+    </div>
+  )
+}
+
+export default Comp
+
+async function AddStartingPos(UserPublicKey: string) {
+    try {
+  
+      const res = await axios.get(`api/result/${UserPublicKey}`);
+  
+      console.log(res.data)
+  
+      return res.data; 
+        // Don't forget to return something   
+    }
+    catch (err) {
+        console.error(err);
+    }
   }
-
+  
+  async function UpdateActive(id) {
+    try {
+      const res = await axios.put(`api/result/${id}`);
+  
+      return res.data.result; 
+        // Don't forget to return something   
+    }
+    catch (err) {
+        console.error(err);
+    }
+  }
+  
   async function HandleResult(result: number) {
     // initialize data state variable as an empty array
     await sleep(10500);
@@ -222,14 +287,3 @@ function Comp (props) {
   function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
-
-  return (
-    <div>
-      <div ref={scene} style={{ width: '100%', height: '100%' }}>
-        <button onClick={handleAddCircle} className="px-8 m-2 btn bg-gradient-to-r from-[#FAD836] to-[#47833C]" id ="start">Play</button>
-      </div>
-    </div>
-  )
-}
-
-export default Comp

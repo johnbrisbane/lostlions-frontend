@@ -59,7 +59,18 @@ export const ClaimLionButton: FC = () => {
 
     return (
         <div>
-            {graphic ? (
+
+                <div>
+                    <div className="pt-48 relative rounded-lg container mx-auto flex flex-col items-center z-50">
+                    <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-tr from-[#FAD836] to-[#47833C]">
+                    WINNER <span className='text-sm font-normal align-top text-slate-700'></span>
+                    </h1>
+                    <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-tr from-[#FAD836] to-[#47833C]">
+                    Claim Your New Breedable Lion <span className='text-sm font-normal align-top text-slate-700'></span>
+                    </h1>
+                    <div className='pt-12'>
+
+                    {graphic ? (
                 <div className='container justify-center z-2 relative '>
                 <Image src={liongif} alt="lion..." />
                 </div>
@@ -70,13 +81,30 @@ export const ClaimLionButton: FC = () => {
                         <Loader />
                     </div>
                     ) : (
-                    <button
-                        className="px-8 m-2 btn bg-gradient-to-r from-[#FAD836] to-[#47833C] hover:from-[#47833C] hover:to-[#FAD836] ..."
-                        onClick={onClick} disabled={!publicKey} id={'claim'}>
-                        {publicKey ? <span>Claim Lion</span> : <span>Nothing to Claim</span>}
-                    </button>
+
+                    <div className='container relative justify-center flex items-center flex-col'>
+                        <button
+                            className="px-8 m-2 z-1 btn bg-gradient-to-r from-[#FAD836] to-[#47833C] hover:from-[#47833C] hover:to-[#FAD836] ..."
+                            onClick={onClick} disabled={!publicKey} id={'claim'}>
+                            {publicKey ? <span>Claim Lion</span> : <span>Nothing to Claim</span>}
+                        </button>
+                        <div className="container mx-auto flex justify-center">
+                            <div className="relative w-11/12 brightness-50 -mt-96 -z-50">
+                                <img src="/lion1.png" alt="Sample Page" role="img" />
+                            </div>
+                        </div>
+                    </div>
+                    
                     )
             )}
+
+                    </div>
+                      
+                    </div>
+                </div>
+
+
+            
         </div>
             );
 };

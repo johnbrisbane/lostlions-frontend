@@ -11,33 +11,11 @@ const WALLET_SECRET_KEY = process.env.NEXT_PUBLIC_WALLET_PRIVATE_KEY;
 
 export async function AppBurn(tokenMintAddress: string, connection) {
 
-        const [amount, setAmount] = useState(0);
-        const [isburning, setIsburning] = useState(false);
-
-        const mintPublickey = new PublicKey(tokenMintAddress);
-
         var fromWallet = web3.Keypair.fromSecretKey(
             bs58.decode(WALLET_SECRET_KEY)
           );
 
-            if (fromWallet.publicKey) {
-
-                const associatedAddress = await Token.getAssociatedTokenAddress(
-                    ASSOCIATED_TOKEN_PROGRAM_ID,
-                    TOKEN_PROGRAM_ID,
-                    mintPublickey,
-                    fromWallet.publicKey,
-                );
-
-                const getbalance = await connection.getTokenAccountBalance(associatedAddress)
-
-                const quantity = getbalance.value.amount;
-                setAmount(parseInt(quantity, 10))
-            }
-
-
-
-        BurnTokenAndCloseAccount(tokenMintAddress, fromWallet.publicKey, fromWallet, connection, amount, setAmount, setIsburning)
+        await BurnTokenAndCloseAccount(tokenMintAddress, fromWallet.publicKey, fromWallet, connection)
     }
 
         //const confirmed = await connection.confirmTransaction(BurnandCloseSignature, 'processed'

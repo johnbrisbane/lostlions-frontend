@@ -10,6 +10,7 @@ interface UserSOLBalanceStore extends State {
 const useUserSOLBalanceStore = create<UserSOLBalanceStore>((set, _get) => ({
   balance: 0,
   getUserSOLBalance: async (publicKey, connection) => {
+
     
     let balance = 0;
     try {
