@@ -6,6 +6,9 @@ import { useRouter } from 'next/router'
 import { SendBackToken } from './AppSendBack'
 
 function Comp (props) {
+  const [data, setData] = useState([]);
+  const [winner, setWinner] = useState<boolean>(false);
+
   const scene = useRef()
   const isPressed = useRef(false)
   const engine = useRef(Engine.create())
@@ -167,70 +170,38 @@ function Comp (props) {
     }
   }, [])
 
-  const handleAddCircle = () => {
-    (document.getElementById("start") as HTMLButtonElement).disabled = true;
-
-    AddStartingPos(userPub)
-    .then(
-        function(res) {
-          if(res && res.active == '1'){
-            UpdateActive(res.id);
-            World.add(engine.current.world, Bodies.circle(res.starting_pos, 5, 10, { restitution: .9 }));
-            HandleResult(res.result)
-          }
-          else {
-            if (confirm("You have no Lion Credit for plinko, Please return home to submit a lion")) {
-                router.push('/');
-              } else {
-                router.push('/');
-              }
-          }
+  useEffect(() => {
+    async function getResults() {
+      const request = await axios.get(`api/result/${userPub}`);
+      if (request.data.active == '1'){
+        setData(request.data.starting_pos);
+        if (request.data.result == '1')
+        {
+          setWinner(true);
         }
-    );
+      }
+      return request;
+    }      
+    getResults()
+  }, [userPub]); 
+
+
+  const handleAddCircle = () => {
+    //(document.getElementById("start") as HTMLButtonElement).disabled = true;
+     World.add(engine.current.world, Bodies.circle(data, 5, 10, { restitution: .9 }));
+
+     if (winner){
+      HandleResult(1);
+     }
+     else {
+      HandleResult(0);
+     }
+
   }
 
-  return (
-    <div>
-      <div ref={scene} style={{ width: '100%', height: '100%' }}><button onClick={handleAddCircle} className="px-8 m-2 btn bg-gradient-to-r from-[#FAD836] to-[#47833C]" id ="start">Play</button>
-</div>
-    </div>
-  )
-}
-
-export default Comp
-
-async function AddStartingPos(UserPublicKey: string) {
-    try {
-  
-      const res = await axios.get(`api/result/${UserPublicKey}`);
-  
-      console.log(res.data)
-  
-      return res.data; 
-        // Don't forget to return something   
-    }
-    catch (err) {
-        console.error(err);
-    }
-  }
-  
-  async function UpdateActive(id) {
-    try {
-      const res = await axios.put(`api/result/${id}`);
-  
-      return res.data.result; 
-        // Don't forget to return something   
-    }
-    catch (err) {
-        console.error(err);
-    }
-  }
-  
   async function HandleResult(result: number) {
     // initialize data state variable as an empty array
-    console.log("Hello");
     await sleep(10500);
-    console.log("World!");
 
     if (result == 0) {
         window.alert("Sorry You Lost your lion!!\nTry Again?");
@@ -251,3 +222,14 @@ async function AddStartingPos(UserPublicKey: string) {
   function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
+
+  return (
+    <div>
+      <div ref={scene} style={{ width: '100%', height: '100%' }}>
+        <button onClick={handleAddCircle} className="px-8 m-2 btn bg-gradient-to-r from-[#FAD836] to-[#47833C]" id ="start">Play</button>
+      </div>
+    </div>
+  )
+}
+
+export default Comp

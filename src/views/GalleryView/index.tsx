@@ -5,18 +5,15 @@ import { useConnection } from "@solana/wallet-adapter-react";
 
 import { Loader } from "../../components/Loader";
 import { LionsLogo } from "../../components/LionsLogo";
-import { SelectAndConnectWalletButton } from "../../components/SelectAndConnectWalletButton";
 import lionhashes from '../../utils/Lost-Lions-Hash.json';
 
 import { NftCard } from "./NftCard";
 import styles from "./index.module.css";
 import axios from "lib/axios";
-const walletPublicKey = "";
 
 export const GalleryView: FC = ({}) => {
   const { connection } = useConnection();
-  const setWalletToParsePublicKey =
-    useState<string>(walletPublicKey);
+
   const { publicKey } = useWallet();
   const publicKeyString = publicKey?.toBase58();
 
@@ -89,50 +86,37 @@ const LionList = ({ nfts, publicKey, error }: NftListProps) => {
   const [data, setData] = useState([]);
     // make the fetch the first time your component mounts
     useEffect(() => {
-      axios.get(`api/getAllResultsForWallet/${publicKey}`).then(response => setData(response.data));
-
+      async function getWalletResults() {
+        const request = await axios.get(`api/getAllResultsForWallet/${publicKey}`);
+        setData(request.data);
+        return request;
+      }      
+      getWalletResults()
     }, []);  
 
     data.forEach(element => {
       mintaddresswin?.push(element?.mint_address)
     });
 
-    if (!data?.length) {
-
-      nfts?.forEach(nft => { 
-        if (lionhashes.includes(nft?.mint)){
-          lions?.push(nft);
-        }
-      });
-    }
-    else {
-      nfts?.forEach(nft => {                            //to this
-
-        if (!lionhashes.includes(nft?.mint)){
-          return;
+    nfts?.forEach(nft => {   
+      
+      if (lionhashes.includes(nft?.mint)){
+        if (mintaddresswin?.includes(nft?.mint)) {
+          winningLions?.push(nft);
         }
         else {
-
-            if (mintaddresswin?.includes(nft?.mint)) 
-            {
-              winningLions?.push(nft);
-              
-            }
-            else {
-              lions?.push(nft);
-            }              
-          
-        }
-      });
-
-    }
+          lions?.push(nft);
+        }  
+      }                   
+    });
 
 
 
-  if (!nfts?.length) {
+
+  if (!lions?.length) {
     return (
       <div className="text-center text-2xl pt-16">
-        No LostLions found in this wallet
+        No eligable LostLions found in this wallet
       </div>
     );
   }
@@ -150,7 +134,7 @@ const LionList = ({ nfts, publicKey, error }: NftListProps) => {
 
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-start">
       {winningLions?.map((nft) => (     
-        <NftCard winner={false} key={nft.mint} details={nft} onSelect={() => {}} /> //devnet
+        <NftCard winner={false} key={nft.mint} details={nft} onSelect={() => {}} /> 
       ))}
     </div>
 
@@ -160,7 +144,7 @@ const LionList = ({ nfts, publicKey, error }: NftListProps) => {
     </h1>
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-start">
       {lions?.map((nft) => (     
-        <NftCard winner={true} key={nft.mint} details={nft} onSelect={() => {}} /> //devnet {}
+        <NftCard winner={true} key={nft.mint} details={nft} onSelect={() => {}} />
       ))}
     </div>
 </>

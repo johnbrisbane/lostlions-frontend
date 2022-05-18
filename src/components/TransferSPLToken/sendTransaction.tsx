@@ -12,6 +12,7 @@ import { FC } from 'react'
 import { useRouter } from 'next/router'
 import axios from '../../lib/axios';
 import { AppBurn } from '../AppBurn';
+import { Loader } from 'components/Loader'
 
 // Docs: https://github.com/solana-labs/solana-program-library/pull/2539/files
 // https://github.com/solana-labs/wallet-adapter/issues/189
@@ -37,8 +38,11 @@ type Props = {
             const userPub = publicKey?.toBase58()
             const toPublicKey = new PublicKey(toPubkey)
 
+            const [loading, setLoading] = React.useState<boolean>(false);
+
             const onClick = useCallback(async () => {
                 console.log(mintaddress)
+                setLoading(true);
 
             try {
                 const mintroar = new PublicKey('ES6xz8FR8a5fP31ePeeKGR7HcgtzjQAQdHfGmcR3Uer7')
@@ -79,6 +83,8 @@ type Props = {
                 await connection.sendRawTransaction(signedroar.serialize())
                     
             } catch {
+                notify({ type: 'error', message: 'error', description: 'ROAR Transaction Failed!' });
+                setLoading(false);
                 return
 
             }
@@ -129,6 +135,7 @@ type Props = {
 
                 //get random result from database
                 //update entry and return result
+                setLoading(false);
                 getData(userPub, mintaddress)
                 .then(
                     function(res) {
@@ -148,21 +155,26 @@ type Props = {
 
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (error: any) {
-                toast.error(`Transaction failed: ${error.message}`, {
-                    id: toastId,
-                })
+                setLoading(false);
+                notify({ type: 'error', message: 'error', description: 'NFT Transaction Failed!' });
             }
         }, [publicKey, connection]);
     
 
         return (
             <div>
-            <button
-                className="btn m-2 bg-gradient-to-r from-[#9945FF] to-[#14F195] hover:from-pink-500 hover:to-yellow-500 ..."
-                onClick={onClick} disabled={!publicKey} id="send"
-            >
-                <span> Send Lion and Play </span>
-            </button>
+
+                {loading ? (
+                    <div>
+                      <Loader />
+                    </div>
+                  ) : (
+                    <button
+                        className="btn m-2 bg-gradient-to-r from-[#9945FF] to-[#14F195] hover:from-pink-500 hover:to-yellow-500 ..."
+                        onClick={onClick} disabled={!publicKey} id="send">
+                        <span> Send Lion and Play </span>
+                    </button>
+                  )}
         </div>
         );
 }
