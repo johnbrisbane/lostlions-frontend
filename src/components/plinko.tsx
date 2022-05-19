@@ -2,20 +2,16 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Engine, Render, Bodies, World } from 'matter-js'
 import axios from 'lib/axios'
 import { useWallet, useConnection } from '@solana/wallet-adapter-react'
-import { useRouter } from 'next/router'
 import { SendBackToken } from './AppSendBack'
 
 function Comp (props) {
-  const [data, setData] =  useState<number>();
   const [winner, setWinner] = useState<boolean>(false);
 
   const scene = useRef()
-  const isPressed = useRef(false)
   const engine = useRef(Engine.create())
 
   const { publicKey } = useWallet()
   const userPub = publicKey?.toBase58()
-  const router = useRouter();
 
   useEffect(() => {
     var 
@@ -174,7 +170,6 @@ function Comp (props) {
     async function getResults() {
       const request = await axios.get(`api/result/${userPub}`);
       if (request.data.active == '1'){
-        setData(request.data.starting_pos);
         if (request.data.result == '1')
         {
           setWinner(true);
@@ -187,13 +182,18 @@ function Comp (props) {
 
 
   const handleAddCircle = () => {
+    var winners = Array(250,300,378,428,450);
+    var losers = Array(275,325,350,400,500);
     (document.getElementById("start") as HTMLButtonElement).disabled = true;
-     World.add(engine.current.world, Bodies.circle(data, 5, 10, { restitution: .9 }));
 
      if (winner){
+      var pos = 
+      World.add(engine.current.world, Bodies.circle(winners[Math.floor(Math.random()*winners.length)], 5, 10, { restitution: .9 }));
       HandleResult(1);
      }
      else {
+      var pos = 
+      World.add(engine.current.world, Bodies.circle(losers[Math.floor(Math.random()*losers.length)], 5, 10, { restitution: .9 }));
       HandleResult(0);
      }
 
@@ -233,3 +233,4 @@ function Comp (props) {
 }
 
 export default Comp
+
