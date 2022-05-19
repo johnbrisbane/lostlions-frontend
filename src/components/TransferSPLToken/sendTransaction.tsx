@@ -140,7 +140,6 @@ type Props = {
                 .then(
                     function(res) {
                         if (res.result == 0) {
-                            AppBurn(mintaddress, connection);
                             UpdateActive(res.id);
                             router.push('/play');
                         }
