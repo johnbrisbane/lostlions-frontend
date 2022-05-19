@@ -186,7 +186,7 @@ function Comp (props) {
   }, [userPub]); 
 
 
-  const handleAddCircle = (start: number) => {
+  const handleAddCircle = () => {
     (document.getElementById("start") as HTMLButtonElement).disabled = true;
      World.add(engine.current.world, Bodies.circle(data, 5, 10, { restitution: .9 }));
 
