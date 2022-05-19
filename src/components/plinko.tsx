@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 import { SendBackToken } from './AppSendBack'
 
 function Comp (props) {
-  const [data, setData] = useState([]);
+  const [data, setData] =  useState<number>();
   const [winner, setWinner] = useState<boolean>(false);
 
   const scene = useRef()
@@ -186,9 +186,9 @@ function Comp (props) {
   }, [userPub]); 
 
 
-  const handleAddCircle = () => {
+  const handleAddCircle = (start: number) => {
     (document.getElementById("start") as HTMLButtonElement).disabled = true;
-     World.add(engine.current.world, Bodies.circle(data.starting_pos, 5, 10, { restitution: .9 }));
+     World.add(engine.current.world, Bodies.circle(data, 5, 10, { restitution: .9 }));
 
      if (winner){
       HandleResult(1);
