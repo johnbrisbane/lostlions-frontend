@@ -4,7 +4,6 @@ import axios from 'lib/axios'
 import { useWallet } from '@solana/wallet-adapter-react'
 
 function Comp (props) {
-  const [data, setData] = useState([]);
   const [winner, setWinner] = useState<boolean>(false);
 
   const scene = useRef()
@@ -177,7 +176,6 @@ function Comp (props) {
     async function getResults() {
       const request = await axios.get(`api/result/${userPub}`);
       if (request.data.active == '1'){
-        setData(request.data.starting_pos);
         if (request.data.result == '1')
         {
           setWinner(true);
@@ -238,3 +236,4 @@ function Comp (props) {
 }
 
 export default Comp
+
