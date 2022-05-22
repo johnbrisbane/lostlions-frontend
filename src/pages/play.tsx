@@ -1,6 +1,5 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import Scene from "../components/Scene";
 import Comp from "../components/plinko"
 
 
