@@ -28,7 +28,13 @@ export const ContentContainer: FC = props => {
               <>
               <li>
                 <Link href="/game">
-                  <a>Plinko</a>
+                  <a>Lions</a>
+                </Link>
+                <Link href="/gamble">
+                  <a>ROAR</a>
+                </Link>
+                <Link href="/gamble">
+                  <a>Solana</a>
                 </Link>
               </li>
               </>

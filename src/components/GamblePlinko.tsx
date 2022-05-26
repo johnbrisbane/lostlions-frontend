@@ -2,9 +2,21 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Engine, Render, Bodies, World, Runner } from 'matter-js'
 import axios from 'lib/axios'
 import { useWallet } from '@solana/wallet-adapter-react'
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
-function Comp (props: any) {
+function Comp (props:any) {
   const [winner, setWinner] = useState<boolean>(false);
+  const [wager, setWager] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [alignment, setAlignment] = useState('ROAR');
+
+  const handleChange = (
+    event: React.MouseEvent<HTMLElement>,
+    newAlignment: string,
+  ) => {
+    setAlignment(newAlignment);
+  };
 
   const scene = useRef()
   const engine = useRef(Engine.create())
@@ -104,23 +116,13 @@ function Comp (props: any) {
   
 
     World.add(engine.current.world, [
-      // floor
-      Bodies.rectangle(width/2, height, width, 25, boundryoptions),
 
       //walls
       Bodies.rectangle(0, height/2, 10, height, boundryoptions),
       Bodies.rectangle(width, height/2, 10, height, boundryoptions),
       
     ]);
-    for (let i =0; i <= cols; i++){
-        if (i % 2 == 0){
-            World.add(engine.current.world, [Bodies.rectangle(spacing*i-spacing/2, height, spacing, 25, coloroptionsred)]);
-        }
-        else {
-            World.add(engine.current.world, [Bodies.rectangle(spacing*i-spacing/2, height, spacing, 25, coloroptionsgreen)]);
-        }
 
-    }
 
     //--------------------------
     //        PLINKOS
@@ -159,7 +161,7 @@ function Comp (props: any) {
     });
     Runner.run(runner, engine.current);
 
-    engine.current.timing.timeScale = 0.55
+    engine.current.timing.timeScale = 0.40
 
     return () => {
       Render.stop(render)
@@ -188,22 +190,25 @@ function Comp (props: any) {
 
 
   const handleAddCircle = () => {
-    var winners = Array(250,300,378,428,450);
-    var losers = Array(275,325,350,400,500);
-    (document.getElementById("start") as HTMLButtonElement).disabled = true;
+    setWager(0);
 
-     if (winner){
-      World.add(engine.current.world, Bodies.circle(winners[Math.floor(Math.random()*winners.length)], 5, 10, { restitution: .9 }));
-      HandleResult(1);
-     }
-     else {
-      World.add(engine.current.world, Bodies.circle(losers[Math.floor(Math.random()*losers.length)], 5, 10, { restitution: .9 }));
-      HandleResult(0);
-     }
+    if (total > 1000) {
+        (document.getElementById("start") as HTMLButtonElement).disabled = true;
+        (document.getElementById("start") as HTMLButtonElement).textContent = 'REFRESH PAGE';
+    }
+    if (wager > 1000) {
+        (document.getElementById("start") as HTMLButtonElement).disabled = true;
+        window.alert("Warning, this may lag browser");
+    }
+
+    for (let i = 0; i < wager; i++) {
+        World.add(engine.current.world, Bodies.circle(Math.random()*600, Math.random()*10, 6, { restitution: .9 }));
+      }
   }
 
   async function HandleResult(result: number) {
     // initialize data state variable as an empty array
+    
     await sleep(10500);
 
     if (result == 0) {
@@ -228,9 +233,63 @@ function Comp (props: any) {
 
   return (
     <div>
-      <div ref={scene} style={{ width: '100%', height: '100%' }}>
-        <button onClick={handleAddCircle} className="px-8 m-2 btn bg-gradient-to-r from-[#FAD836] to-[#47833C]" id ="start">Play</button>
-      </div>
+
+        <div className="navbar mb-2 shadow-lg bg-neutral text-neutral-content" style={{backgroundImage: `url(backdrop.jpg)`}}>
+            <div className="px-2 mx-2 navbar-start">
+                <button onClick={() => {
+                    setWager(wager + 25);
+                    setTotal(total + 25);
+                }} className="px-8 m-2 btn bg-gradient-to-r from-[#fa4336] to-[#47833C]">Add 25</button>
+                <button onClick={() => {
+                    setWager(wager + 50);
+                    setTotal(total + 50);
+                }} className="px-8 m-2 btn bg-gradient-to-r from-[#27168a] to-[#47833C]">Add 50</button>
+                <button onClick={() => {
+                    setWager(wager + 100);
+                    setTotal(total + 100);
+                }} className="px-8 m-2 btn bg-gradient-to-r from-[#000000] to-[#47833C]">Add 100</button>
+                <button onClick={() => {
+                    setWager(0)
+                }} className="px-8 m-2 btn bg-gradient-to-r from-[#d4d3c9] to-[#47833C]">Reset</button>
+            </div>
+
+            <div className="navbar-center lg:flex">
+            <div className="flex items-stretch">
+                <p className=" text-black text-2xl text-center">
+                    Wager: {wager} {alignment}
+                </p>
+            </div>
+            </div>
+            <div className="navbar-end bordered">
+                <ToggleButtonGroup
+                color="info"
+                value={alignment}
+                exclusive
+                onChange={handleChange}
+                >
+                <ToggleButton value="ROAR">ROAR</ToggleButton>
+                <ToggleButton value="SOL">Solana</ToggleButton>
+                </ToggleButtonGroup>
+            </div>
+        </div>
+        
+        <div className="container mx-auto flex justify-center top-auto w-screen">
+            <button onClick={handleAddCircle} className="px-8 m-2 btn bg-gradient-to-r from-[#FAD836] to-[#47833C]" id ="start">Play</button>
+        </div>
+        <div className="container mx-auto flex justify-center top-auto w-screen"ref={scene} style={{ width: '100%', height: '100%' }}></div>
+        <div className="container mx-auto flex justify-between top-auto" style={{ width: '700px' }}>
+            <p >5x</p>
+            <p>2.5x</p>
+            <p>1x</p>
+            <p>.75x</p>
+            <p>.5x</p>
+            <p>.25x</p>
+            <p>.5x</p>
+            <p>.75x</p>
+            <p>1x</p>
+            <p>2.5x</p>
+            <p>5x</p>
+        </div>
     </div>
   )
 }

@@ -81,7 +81,13 @@ export const AppBar: FC = props => {
             {publicKey ? (
               <>
               <Link href="/game">
-                <a className="btn btn-ghost btn-sm rounded-btn">Plinko</a>
+                <a className="btn btn-ghost btn-sm rounded-btn">Lions</a>
+              </Link>
+              <Link href="/gamble">
+                <a className="btn btn-ghost btn-sm rounded-btn">ROAR</a>
+              </Link>
+              <Link href="/gamble">
+                <a className="btn btn-ghost btn-sm rounded-btn">Solana</a>
               </Link>
               </>
               ) : null}
